@@ -39,12 +39,12 @@ function detect(name, callback) {
   });
 }
 
-function monitor() {
+function monitor(tips) {
   detect(name, function() {
     var shell = args[1];
 
     if (shell) {
-      console.log('restart: %s', shell);
+      console.log('%s: %s', tips, shell);
       exec(shell, {
         maxBuffer: 200 * 1024,
         cwd: process.cwd()
@@ -58,8 +58,8 @@ function monitor() {
   });
 }
 
-monitor();
+monitor('start');
 
 setInterval(function() {
-  monitor();
+  monitor('restart');
 }, 10 * 1000);

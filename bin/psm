@@ -58,6 +58,8 @@ function monitor() {
   });
 }
 
-var interval = setInterval(function() {
+monitor();
+
+setInterval(function() {
   monitor();
 }, 10 * 1000);

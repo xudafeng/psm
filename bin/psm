@@ -1,0 +1,63 @@
+#!/usr/bin/env node
+/* ================================================================
+ * psm by xdf(xudafeng[at]126.com)
+ *
+ * first created at : Mon Sep 14 2015 18:27:00 GMT+0800 (CST)
+ *
+ * ================================================================
+ * Copyright 2013 xdf
+ *
+ * Licensed under the MIT License
+ * You may not use this file except in compliance with the License.
+ *
+ * ================================================================ */
+
+'use strict';
+
+var EOL = require('os').EOL;
+var exec = require('child_process').exec;
+var args = process.argv.splice(2);
+
+var name = args[0];
+
+if (!name) {
+  console.log('args error');
+  return;
+}
+
+function detect(name, callback) {
+  exec('ps -ef | grep ' + name, function(error, stdout) {
+    if (error) {
+      throw error;
+    };
+
+    var items = stdout.trim().split(EOL);
+
+    if (items.length <= 3) {
+      callback();
+    }
+  });
+}
+
+function monitor() {
+  detect(name, function() {
+    var shell = args[1];
+
+    if (shell) {
+      console.log('restart: %s', shell);
+      exec(shell, {
+        maxBuffer: 200 * 1024,
+        cwd: process.cwd()
+      }, function(error, stdout) {
+        if (error) {
+          throw error;
+        };
+        console.log(stdout.trim());
+      });
+    }
+  });
+}
+
+var interval = setInterval(function() {
+  monitor();
+}, 10 * 1000);
